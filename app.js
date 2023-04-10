@@ -9,6 +9,22 @@ app.get("/", (req, res) => {
   res.status(200).send("Hello amigos");
 });
 
+app.get("/team", (req, res) => {
+  res.status(200).send("Hello amigos");
+});
+
+app.post("/team/pokemons", (req, res) => {
+  res.status(200).send("Hello amigos");
+});
+
+app.delete("/team/pokemons/:id", (req, res) => {
+  res.status(200).send("Hello amigos");
+});
+
+app.put("/team", (req, res) => {
+  res.status(200).send("Hello amigos");
+});
+
 app.listen(port, () => {
   console.log(`Server started at port ${port}`);
 });
