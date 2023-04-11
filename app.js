@@ -6,7 +6,7 @@ const port = 3000;
 app.get("/", (req, res) => {
   //req - request
   //res - response
-  res.status(200).send("Hello amigos");
+  res.status(200).send("Hello");
 });
 
 app.get("/team", (req, res) => {
@@ -28,3 +28,5 @@ app.put("/team", (req, res) => {
 app.listen(port, () => {
   console.log(`Server started at port ${port}`);
 });
+
+exports.app = app;
