@@ -1,12 +1,17 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const userController = require("./controllers/users");
+
+const usersController = require("./controllers/users");
+usersController.registerUser("Macailh", "hola123");
 
 require("./auth")(passport);
 
 const app = express();
 const port = 3000;
+
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   //req - request
@@ -15,27 +20,33 @@ app.get("/", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  userController.checkUserCredentials(
+  if (!req.body) {
+    return res.status(400).json({ message: "Missing data" });
+  } else if (!req.body.user || !req.body.password) {
+    return res.status(400).json({ message: "Missing data" });
+  }
+
+  usersController.checkUserCredentials(
     req.body.user,
     req.body.password,
     (err, result) => {
-      if (!result) {
+      if (err || !result) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
+
+      const token = jwt.sign({ userId: result }, "secretPassword");
+      res.status(200).json({ token: token });
     }
   );
-
-  const token = jwt.sign({ userId: req.body.user });
-
-  res.status(200).json({
-    token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.350o18fZPeOi3tEGEac6U4UzuB_k-FuZeVQvzf369IQ",
-  });
 });
 
-app.get("/team", (req, res) => {
-  res.status(200).send("Hello amigos");
-});
+app.get(
+  "/team",
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    res.status(200).send("Hello World!");
+  }
+);
 
 app.post("/team/pokemons", (req, res) => {
   res.status(200).send("Hello amigos");
